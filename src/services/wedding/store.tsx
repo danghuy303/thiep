@@ -26,8 +26,18 @@ function loadDb(): AppDatabase {
   }
   try {
     const data = JSON.parse(raw) as AppDatabase
-    if (data.weddings && data.weddings[0]) {
-      data.weddings[0].musicUrl = '/music/vay-cuoi.mp3'
+    if (data.weddings && data.weddings.length > 0) {
+      data.weddings.forEach((w) => {
+        w.status = 'PUBLISHED'
+        if (!w.musicUrl) w.musicUrl = '/music/vay-cuoi.mp3'
+      })
+      if (data.settings) {
+        data.settings.forEach((s) => {
+          if (!s.defaultGuestLabel || s.defaultGuestLabel === 'Quý khách') {
+            s.defaultGuestLabel = 'Vợ chồng bạn chung'
+          }
+        })
+      }
       localStorage.setItem(DB_KEY, JSON.stringify(data))
     }
     return data
@@ -150,7 +160,7 @@ export const storeApi = {
       weddingId: id,
       coverTitle: 'Trân trọng kính mời',
       invitationPrefix: 'Kính mời',
-      defaultGuestLabel: 'Quý khách',
+      defaultGuestLabel: 'Vợ chồng bạn chung',
       shareMessageTemplate:
         '💌 {groom} & {bride} trân trọng kính mời {guest} đến chung vui trong ngày trọng đại {date}. Thiệp mời: {url}',
     }

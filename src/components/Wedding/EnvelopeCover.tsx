@@ -68,20 +68,13 @@ export function EnvelopeCover({
         className="relative w-full max-w-[370px] bg-[#faf6f0] rounded-2xl p-7 md:p-9 shadow-[0_25px_60px_rgba(0,0,0,0.55)] border border-amber-200/40 text-center flex flex-col items-center z-10"
       >
         {/* Decorative Floral Side Ornaments (Resized smaller & positioned to avoid obscuring text) */}
-        <TrauCauOrnament className="absolute -left-7 -top-7 w-24 md:w-28 h-auto pointer-events-none drop-shadow-md z-0" opacity={0.95} />
-        <TrauCauOrnament className="absolute -right-7 -top-7 w-24 md:w-28 h-auto pointer-events-none -scale-x-100 drop-shadow-md z-0" opacity={0.95} />
+        <TrauCauOrnament className="absolute -left-7 -top-7 w-20 md:w-22 h-auto pointer-events-none drop-shadow-sm z-0" opacity={0.75} />
+        <TrauCauOrnament className="absolute -right-7 -top-7 w-20 md:w-22 h-auto pointer-events-none -scale-x-100 drop-shadow-sm z-0" opacity={0.75} />
 
         {/* Top Heart Icon Badge */}
-        <div className="w-11 h-11 rounded-full bg-[#450b14] text-amber-100 flex items-center justify-center mb-5 shadow-inner z-10">
+        <div className="w-11 h-11 rounded-full bg-[#450b14] text-amber-100 flex items-center justify-center mb-4 shadow-inner z-10">
           <Heart size={20} fill="currentColor" />
         </div>
-
-        {/* Guest Greeting if personal */}
-        {guestLabel && guestLabel !== 'Quý khách' && (
-          <p className="text-xs uppercase tracking-[0.2em] text-[#8c6d1e] mb-2 font-medium z-10">
-            {settings.invitationPrefix} {guestLabel}
-          </p>
-        )}
 
         {/* Couple Names - Ensures clear visibility without floral overlap */}
         <div className="z-10 w-full px-2 my-1">
@@ -89,7 +82,7 @@ export function EnvelopeCover({
             {wedding.groom.shortName}
           </h1>
           <p className="script text-2xl text-[#c9a24d] my-1">&</p>
-          <h2 className="serif text-3xl md:text-[34px] text-[#450b14] leading-snug font-normal tracking-tight mb-3">
+          <h2 className="serif text-3xl md:text-[34px] text-[#450b14] leading-snug font-normal tracking-tight mb-2">
             {wedding.bride.shortName}
           </h2>
         </div>
@@ -102,11 +95,19 @@ export function EnvelopeCover({
         </div>
 
         {/* Date Display */}
-        <p className="text-sm font-medium tracking-wide text-[#574312] mt-2 mb-2">
+        <p className="text-sm font-medium tracking-wide text-[#574312] mt-1 mb-1">
           {formatWeddingDate(wedding.weddingDate)}
         </p>
 
-        <p className="text-xs tracking-[0.2em] text-[#8c6d1e] uppercase mb-8">{settings.coverTitle}</p>
+        {/* Dynamic Guest Greeting Typography (Text style replacing dark box form) */}
+        <div className="my-4 text-center z-10 w-full px-2">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#8c6d1e] font-sans font-semibold mb-1">
+            {settings.invitationPrefix || 'KÍNH MỜI'}
+          </p>
+          <p className="serif text-2xl md:text-3xl text-[#450b14] font-bold tracking-tight leading-snug">
+            {guestLabel && guestLabel !== 'Quý khách' ? guestLabel : (settings.defaultGuestLabel || 'Vợ chồng bạn chung')}
+          </p>
+        </div>
 
         {/* Action Button: Mở thiệp */}
         <motion.button
@@ -114,7 +115,7 @@ export function EnvelopeCover({
           onClick={onOpen}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
-          className="bg-[#450b14] hover:bg-[#5c101d] text-amber-100 font-medium px-9 py-3 rounded-full text-xs tracking-[0.25em] uppercase shadow-lg border border-amber-300/30 transition-all flex items-center gap-2"
+          className="bg-[#450b14] hover:bg-[#5c101d] text-amber-100 font-medium px-9 py-3 rounded-full text-xs tracking-[0.25em] uppercase shadow-lg border border-amber-300/30 transition-all flex items-center gap-2 mt-2"
         >
           <span>Mở thiệp</span>
         </motion.button>

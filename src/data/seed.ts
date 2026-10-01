@@ -223,7 +223,7 @@ export const seedDatabase = (): AppDatabase => ({
       weddingId: DEMO_WEDDING_ID,
       coverTitle: 'Trân trọng kính mời',
       invitationPrefix: 'Kính mời',
-      defaultGuestLabel: 'Quý khách',
+      defaultGuestLabel: 'Vợ chồng bạn Chung',
       shareMessageTemplate:
         '💌 {groom} & {bride} trân trọng kính mời {guest} đến chung vui trong ngày trọng đại {date}. Thiệp mời: {url}',
       seoTitle: 'Minh An & Ngọc Hà – Wedding Invitation',

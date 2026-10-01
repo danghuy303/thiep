@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
-  Gift,
   GlassWater,
   Heart,
   Home,
@@ -19,12 +18,13 @@ import {
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 
 import type { WeddingTemplateProps } from '../../types'
-import { cn, uid, weekdayVi } from '../../utils'
+import { cn, getDirectAudioUrl, uid, weekdayVi } from '../../utils'
 import { EnvelopeCover } from '../../components/Wedding/EnvelopeCover'
 import { EnvelopeGraphic } from '../../components/Wedding/EnvelopeGraphic'
 import { Lightbox } from '../../components/Wedding/Lightbox'
 import { TrauCauOrnament } from '../../components/Wedding/TrauCauOrnament'
 import { Reveal } from '../../components/Wedding/Reveal'
+import { GiftBoxCard } from '../../components/Wedding/GiftBoxCard'
 import { storeApi } from '../../services/wedding/store'
 
 const nav = [
@@ -87,12 +87,23 @@ export function Template01(props: WeddingTemplateProps) {
   const guestLabel = guest?.displayName || settings.defaultGuestLabel
 
   useEffect(() => {
-    if (!wedding.musicUrl) return
-    const audio = new Audio(wedding.musicUrl)
+    const targetUrl = getDirectAudioUrl(wedding.musicUrl)
+    const audio = new Audio(targetUrl)
     audio.loop = true
-    audio.volume = wedding.musicVolume
+    audio.volume = wedding.musicVolume ?? 0.5
     audioRef.current = audio
+
+    const handleAudioError = () => {
+      if (audioRef.current && targetUrl !== '/music/vay-cuoi.mp3') {
+        audioRef.current.src = '/music/vay-cuoi.mp3'
+        audioRef.current.load()
+      }
+    }
+
+    audio.addEventListener('error', handleAudioError)
+
     return () => {
+      audio.removeEventListener('error', handleAudioError)
       audio.pause()
       audioRef.current = null
     }
@@ -100,22 +111,30 @@ export function Template01(props: WeddingTemplateProps) {
 
   const toggleMusic = () => {
     const audio = audioRef.current
-    if (!audio) {
-      setMusicOn((v) => !v)
-      return
-    }
+    if (!audio) return
     if (musicOn) {
       audio.pause()
       setMusicOn(false)
     } else {
-      void audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false))
+      void audio.play().then(() => setMusicOn(true)).catch(() => {
+        // Fallback to default mp3 on play error
+        audio.src = '/music/vay-cuoi.mp3'
+        audio.load()
+        void audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false))
+      })
     }
   }
 
   const openInvitation = () => {
     setOpened(true)
-    if (wedding.musicEnabled && wedding.musicAutoplay && audioRef.current) {
-      void audioRef.current.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false))
+    if (audioRef.current) {
+      void audioRef.current.play().then(() => setMusicOn(true)).catch(() => {
+        if (audioRef.current) {
+          audioRef.current.src = '/music/vay-cuoi.mp3'
+          audioRef.current.load()
+          void audioRef.current.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false))
+        }
+      })
     }
   }
 
@@ -237,8 +256,8 @@ function InvitationBody(
       <section id="ceremony" className="px-4 py-2 relative z-10">
         <Reveal>
           <div className="relative bg-[#450b14] text-[#FAF6F0] rounded-2xl p-6 md:p-8 shadow-2xl border border-amber-400/30 text-center overflow-hidden">
-            {/* Resized floral ornament on right edge - kept small & background z-0 to never overlap text */}
-            <TrauCauOrnament className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 w-28 md:w-32 h-auto z-0 pointer-events-none drop-shadow-lg opacity-85" />
+            {/* Resized floral ornament on right edge - kept small & faint watermark z-0 to never overlap text */}
+            <TrauCauOrnament className="absolute -right-12 md:-right-16 top-1/2 -translate-y-1/2 w-20 md:w-24 h-auto z-0 pointer-events-none drop-shadow-sm opacity-25" />
 
             <div className="relative z-10">
               <p className="tracking-[0.25em] text-xs uppercase text-[#e5c882] font-sans font-semibold mb-6">
@@ -316,8 +335,8 @@ function InvitationBody(
       <section id="reception" className="px-4 mt-12 relative z-10">
         <Reveal>
           <div className="relative bg-[#450b14] text-[#FAF6F0] rounded-2xl p-6 md:p-8 shadow-2xl border border-amber-400/30 text-center overflow-hidden">
-            {/* Resized floral ornament on left edge - kept small & background z-0 to never overlap calendar */}
-            <TrauCauOrnament className="absolute -left-8 md:-left-10 top-1/2 -translate-y-1/2 w-28 md:w-32 h-auto z-0 pointer-events-none drop-shadow-lg opacity-85 -scale-x-100" />
+            {/* Resized floral ornament on left edge - kept small & faint watermark z-0 to never overlap text */}
+            <TrauCauOrnament className="absolute -left-12 md:-left-16 top-1/2 -translate-y-1/2 w-20 md:w-24 h-auto z-0 pointer-events-none drop-shadow-sm opacity-25 -scale-x-100" />
 
             <div className="relative z-10">
               <p className="tracking-[0.25em] text-xs uppercase text-[#e5c882] font-sans font-semibold mb-2">
@@ -501,15 +520,11 @@ function InvitationBody(
       </Reveal>
     </section>
 
-      {/* GIFT BUTTON & CLOSING */}
+      {/* GIFT BOX CARD & CLOSING */}
       <section className="mt-12 text-center px-4 relative z-10">
-        <button
-          type="button"
-          onClick={onGift}
-          className="inline-flex items-center gap-2 bg-[#450b14] text-amber-100 border border-amber-300/40 px-7 py-3 rounded-full text-xs font-sans tracking-[0.2em] uppercase shadow-lg hover:bg-[#5c101d] transition-all"
-        >
-          <Gift size={16} /> Gửi mừng cưới
-        </button>
+        <Reveal>
+          <GiftBoxCard onOpen={onGift} />
+        </Reveal>
 
         <div className="mt-12 text-center">
           <Heart className="mx-auto text-[#450b14]" size={20} fill="currentColor" />

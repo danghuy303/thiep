@@ -485,13 +485,20 @@ export function SettingsAdmin() {
       <Header wedding={wedding} title="Cài đặt thiệp" />
       <div className="bg-white p-5 rounded-xl border border-stone-200 shadow-sm mt-4 space-y-4">
         <Field label="Slug URL thiệp" value={wedding.slug} onChange={(slug) => storeApi.saveWedding({ ...wedding, slug: slugifyVi(slug) })} />
+        <Field label="Lời xưng hô / Tiêu đề kính mời (VD: Kính mời, Trân trọng kính mời)" value={settings.invitationPrefix || ''} onChange={(invitationPrefix) => saveS({ ...settings, invitationPrefix })} />
+        <Field label="Tên khách mời mặc định (khi chưa chọn cá nhân hóa)" value={settings.defaultGuestLabel || ''} onChange={(defaultGuestLabel) => saveS({ ...settings, defaultGuestLabel })} />
         <Field label="Tiêu đề cover" value={settings.coverTitle} onChange={(coverTitle) => saveS({ ...settings, coverTitle })} />
-        <Field label="Nhạc nền URL (mp3/audio link)" value={wedding.musicUrl || ''} onChange={(musicUrl) => storeApi.saveWedding({ ...wedding, musicUrl })} />
+        <div>
+          <Field label="Nhạc nền URL (Link file MP3 trực tiếp)" value={wedding.musicUrl || ''} onChange={(musicUrl) => storeApi.saveWedding({ ...wedding, musicUrl, musicEnabled: true })} />
+          <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
+            💡 <strong>Lưu ý:</strong> Cần dán link đường dẫn trực tiếp tới file đuôi <code>.mp3</code> (VD: <code>https://domain.com/song.mp3</code>). Link trang web HTML của ZingMP3 (như <code>zingmp3.vn/bai-hat/...html</code>) trình duyệt không thể đọc được MP3, khi đó hệ thống sẽ tự động phát bài MP3 mặc định (Váy Cưới) để đảm bảo thiệp luôn có nhạc.
+          </p>
+        </div>
         <label className="flex gap-2 text-sm font-medium">
-          <input type="checkbox" checked={wedding.musicEnabled} onChange={(e) => storeApi.saveWedding({ ...wedding, musicEnabled: e.target.checked })} /> Bật nhạc nền
+          <input type="checkbox" checked={wedding.musicEnabled ?? true} onChange={(e) => storeApi.saveWedding({ ...wedding, musicEnabled: e.target.checked })} /> Bật nhạc nền
         </label>
         <label className="flex gap-2 text-sm font-medium">
-          <input type="checkbox" checked={wedding.musicAutoplay} onChange={(e) => storeApi.saveWedding({ ...wedding, musicAutoplay: e.target.checked })} /> Tự động phát nhạc khi mở thiệp
+          <input type="checkbox" checked={wedding.musicAutoplay ?? true} onChange={(e) => storeApi.saveWedding({ ...wedding, musicAutoplay: e.target.checked })} /> Tự động phát nhạc khi mở thiệp
         </label>
         <div className="pt-4 border-t">
           <button className="text-xs text-red-700 font-bold underline" onClick={() => storeApi.reset()}>

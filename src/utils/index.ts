@@ -51,3 +51,20 @@ export function formatBytes(bytes: number): string {
 export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(' ')
 }
+
+export function getDirectAudioUrl(url?: string): string {
+  if (!url || !url.trim()) return '/music/vay-cuoi.mp3'
+  const u = url.trim()
+  const lower = u.toLowerCase()
+  if (
+    lower.includes('zingmp3.vn') ||
+    lower.includes('nhaccuatui.com') ||
+    lower.includes('youtube.com') ||
+    lower.includes('youtu.be') ||
+    lower.endsWith('.html') ||
+    lower.endsWith('.htm')
+  ) {
+    return '/music/vay-cuoi.mp3'
+  }
+  return u
+}
