@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-script: "Great Vibes", cursive;
+}
+
+:root {
+  --primary: #6b1d2a;
+  --secondary: #8e2a3a;
+  --background: #f6f0e6;
+  --surface: #fffaf3;
+  --text: #2c1a16;
+  --muted: #8a7468;
+  --accent: #4e6a4a;
+  --gold: #c9a24d;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.wedding-root {
+  background: var(--background);
+  color: var(--text);
+}
+
+.paper-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at top, rgba(201, 162, 77, 0.08), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+.serif {
+  font-family: var(--font-serif);
+}
+
+.script {
+  font-family: var(--font-script);
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.kenburns {
+  animation: kenburns 22s ease-in-out infinite alternate;
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes drFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+

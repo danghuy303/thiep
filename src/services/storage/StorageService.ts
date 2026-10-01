@@ -1,0 +1,21 @@
+export async function compressImage(file: File, maxSize = 1600, quality = 0.78): Promise<{
+  dataUrl: string
+  width: number
+  height: number
+  bytes: number
+  name: string
+}> {
+  const bitmap = await createImageBitmap(file)
+  const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height))
+  const width = Math.round(bitmap.width * scale)
+  const height = Math.round(bitmap.height * scale)
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Không thể nén ảnh')
+  ctx.drawImage(bitmap, 0, 0, width, height)
+  const dataUrl = canvas.toDataURL('image/webp', quality)
+  const bytes = Math.round((dataUrl.length * 3) / 4)
+  return { dataUrl, width, height, bytes, name: file.name }
+}
